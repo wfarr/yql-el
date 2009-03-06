@@ -15,7 +15,8 @@
 
 (defvar yql-data-tables (yql-get-data-tables))
 
-(defun yql-get-data-tables ())
+(defun yql-get-data-tables ()
+  (yql show tables))
 
 (defmacro yql (query)
   ;; break into the first level of the query
