@@ -30,7 +30,7 @@ It's neat bee tee dubz."
         (target (replace-regexp-in-string "\\ " "%20" string))
         (url-max-redirections 0)
         (url-request-method "GET"))
-        (url-retrieve-synchronously (concat yql-public-str target)))
+    (url-retrieve-synchronously (concat yql-public-str target)))
     )
   
 (defun test-yql ()
