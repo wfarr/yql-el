@@ -19,9 +19,8 @@
   (yql show tables))
 
 (defmacro yql (query)
-  ;; break into the first level of the query
+  ;; Holy fuck this part will be hard.
 )
-
 
 (defun make-yql-request (string)
   "Takes in a string and makes it all HTML-friendly and such, and then sends it on to Yahoo!'s YQL servers.
