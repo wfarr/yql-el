@@ -69,8 +69,6 @@ It's neat bee tee dubz."
    (yql-select-symbol 'temp (yql-make-request "select item.condition.temp from weather.forecast where location=30313")))
 ;;   (yql select (temp (condition item)) from (forecast weather) where (=: location 30313)))
   (print
-   (yql-select-symbol
-    '0
-    (yql-select-symbol 'place (yql-make-request "select * from flickr.places where query=\"north beach\""))))
+   (yql-select-symbol 'place (yql-make-request "select latitude from flickr.places where query=\"north beach\"")))
 ;;   (yql select * from (places flickr) where (and: (=: query "north beach") (>: latitude 38))))
 )
