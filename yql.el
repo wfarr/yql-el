@@ -37,8 +37,13 @@ It's neat bee tee dubz."
         (target (yql-clean-up-query-string string))
         (url-max-redirections 0)
         (url-request-method "GET"))
-    (url-retrieve-synchronously (concat yql-public-str target "&format=json")))
-    )
+    (with-current-buffer
+        (url-retrieve-synchronously (concat yql-public-str target "&format=json"))
+        (let ((str (buffer-substring (point-min) (point-max))))
+          (end-of-buffer)
+          (re-search-backward "^\\(.*\\)$")
+          (json-read-from-string (match-string 1))
+          ))))
   
 (defun test-yql ()
   "Test cases that should work by 4pm tomorrow."
