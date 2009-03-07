@@ -63,29 +63,27 @@
 
 NOTE: This is because 'tables' is the only valid argument for 'show' in YQL."
   (let ((list (yql-send-request "show tables")))
-    (yql-filter-to-symbol 'table list)))
+    (yql-filter 'table list)))
 
 (defun yql-desc (table)
   "Makes a GET request to YQL's public-facing api for 'desc `table'', where
 table is any item in `yql-data-tables'."
   (if (memq table yql-data-tables)
-      (yql-filter-to-symbol 'table (yql-send-request (concat "DESC " table)))
+      (yql-filter 'table (yql-send-request (concat "DESC " table)))
     (error "Should be one of `yql-data-tables'!")))
 
-(defun yql-select (selector target table &optional qualifiers)
+(defun yql-select (target table &optional qualifiers)
   "Makes a GET request to YQL's public-facing api for:
     'select `target' from `table' [where `qualifiers']'
-and then uses `selector' to perform a depth-first search to find
-the list containing `selector' as the `car' of said list.
 
-Valid qualifiers depend upon YQL's APIs per-table, while `table' and `target'
-are determined by `yql-data-tables' and the contents of said tables."
-  (let ((qualifiers (if qualifiers (concat " WHERE " qualifiers) "")))
-    (yql-filter-to-symbol
-     selector
-     (yql-send-request (concat "SELECT " target " FROM " table qualifiers)))))
+`table' should be one of `yql-data-tables' and `target' and `qualifiers'
+should be valid for `table'."
+  (let ((qualifiers (if qualifiers (concat " WHERE " (concatenate 'string qualifiers)) "")))
+    (yql-send-request (concat "SELECT " target " FROM " table qualifiers))))
 
-(defun yql-filter-to-symbol (symbol list)
+(defun yql-filter (symbol list)
+  "Filters any JSON returned from a `yql-send-request' call for the value(s)
+associated to `symbol', where the JSON is `list'."
   (let ((result (yql-search-for-symbol symbol list)))
     (if (or (typep result 'list)
             (typep result 'string)
@@ -129,9 +127,9 @@ Returns an S-expression representation of the JSON data returned."
 
 (defun test-yql ()
   (print
-   (yql-filter-to-symbol 'temp (yql-send-request "select item.condition.temp from weather.forecast where location=30313")))
+   (yql-filter 'temp (yql-send-request "select item.condition.temp from weather.forecast where location=30313")))
   (print
-   (yql-filter-to-symbol 'place (yql-send-request "select latitude from flickr.places where query=\"north beach\""))))
+   (yql-filter 'place (yql-send-request "select latitude from flickr.places where query=\"north beach\""))))
 
 
 (provide 'yql)
