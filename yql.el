@@ -33,9 +33,6 @@
 (require 'json)
 (require 'url)
 
-(defvar yql-data-tables (yql-show)
-  "The list of tables available in YQL.")
-
 (defun yql-yahoo-search (query)
   (interactive "sQuery string?: ")
   (let ((result (yql-filter 'result
@@ -144,5 +141,7 @@ Returns an S-expression representation of the JSON data returned."
   (print
    (yql-filter 'place (yql-send-request "select latitude from flickr.places where query=\"north beach\""))))
 
+(defvar yql-data-tables (yql-show)
+  "The list of tables available in YQL.")
 
 (provide 'yql)
