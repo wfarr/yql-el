@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns='http://www.w3.org/1999/xhtml'>
+  <head>
+    <title>
+      {{ page.title }}
+    </title>
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type' />
+    <link href='/css/main.css' rel='stylesheet' type='text/css' />
+    <link href='http://feeds.feedburner.com/wfarr' rel='alternate' title='Will Farrington' type='application/atom+xml' />
+    <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.min.js' type='text/javascript'></script>
+    <script src='/js/gh-repo-list.js' type='text/javascript'></script>
+  </head>
+  <body>
+    <div id='banner'>
+      <a href='http://github.com/wfarr'>
+        <img alt='Fork Me on GitHub' src='http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png' style='position: absolute; top: 0; right: 0; border: 0;' />
+      </a>
+    </div>
+    <div id='header'>
+      <h1>
+        <a href='/' title='Homepage'>wfarr</a>
+      </h1>
+      <p>And His Stupendously Badass Stuff</p>
+    </div>
+    <div id='content'>
+      <div id='sidebar'>
+        <p>
+          <a href='http://feeds.feedburner.com/wfarr' title='Subscribe to me'>Subscribe to me</a>
+        </p>
+        <h3>About</h3>
+        <div id='about'>
+          <p>I'm Will Farrington. Pretty neat, isn't it?</p>
+          <p>But no, seriously, I'm a hacker. Or a wanna-be hacker. Something. Either way I hack and I enjoy doing it.  You can find most of my hacks on GitHub. You should put your hacks there too.</p>
+          <p>Outside my spare time, I'm an undergraduate student of Computer Science at Georgia Institute of Technology. Ask me about the shaft sometime. I've got stories upon stories. Most of them without lube.</p>
+          <p>I love music, emacs, video games, ruby, lasagna, pizza, bacon, and lisp. In that order. Also, books.</p>
+        </div>
+        <h3>Repositories</h3>
+        <div id='repos'></div>
+        <h3>Legal</h3>
+        <div id='legal'>
+          <p>Any content, thoughts, or opinions (because that’s what they are) expressed on this blog are completely my own, and don’t necessarily reflect those of any person or entity with which I might be associated.</p>
+          <p>All content licensed under the Creative Commons Attribution-Share Alike 3.0 License.</p>
+        </div>
+      </div>
+      <div id='main'>
+        {{ content }}
+      </div>
+      <div id='footer'>
+        &nbsp;
+      </div>
+    </div>
+  </body>
+</html>
