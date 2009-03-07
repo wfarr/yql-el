@@ -96,16 +96,14 @@ NOTE: This is because 'tables' is the only valid argument for 'show' in YQL."
 
 (defun yql-desc (table)
   "Makes a GET request to YQL's public-facing api for 'desc `table'', where
-table is any item in `yql-data-tables'."
-  (if (memq table yql-data-tables)
-      (yql-filter 'table (yql-send-request (concat "DESC " table)))
-    (error "Should be one of `yql-data-tables'!")))
+table is any item in `yql-show'."
+  (yql-filter 'table (yql-send-request (concat "DESC " table))))
 
 (defun yql-select (target table &optional qualifiers)
   "Makes a GET request to YQL's public-facing api for:
     'select `target' from `table' [where `qualifiers']'
 
-`table' should be one of `yql-data-tables' and `target' and `qualifiers'
+`table' should be one of `yql-show' and `target' and `qualifiers'
 should be valid for `table'."
   (let ((qualifiers (if qualifiers (concat " WHERE " (concatenate 'string qualifiers)) "")))
     (yql-send-request (concat "SELECT " target " FROM " table qualifiers))))
@@ -151,8 +149,5 @@ Returns an S-expression representation of the JSON data returned."
           (end-of-buffer)
           (re-search-backward "^\\(.*\\)$")
           (json-read-from-string (match-string 1))))))
-
-(defvar yql-data-tables (yql-show)
-  "The list of tables available in YQL.")
 
 (provide 'yql)
