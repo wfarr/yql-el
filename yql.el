@@ -28,6 +28,8 @@
 
 ;; Use (require 'yql)
 
+;; See README for usage.
+
 (require 'json)
 (require 'url)
 
