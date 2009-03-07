@@ -115,7 +115,9 @@ associated to `symbol', where the JSON is `list'."
     (if (or (typep result 'list)
             (typep result 'string)
             (typep result 'number))
-        result
+        result)
+    (if (typep result 'array)
+        (car (coerce result 'list))
       (coerce result 'list))))
 
 (defun yql-escape-query-string (string)
