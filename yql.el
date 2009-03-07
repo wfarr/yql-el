@@ -4,7 +4,7 @@
 
 ;; Authors: Will Farrington, Joshua Justice
 ;; URL: http://github.com/wfarr/yql.el/tree/master
-;; Version: 0.01pre
+;; Version: 0.1
 ;; Keywords: yql, yahoo
 
 ;; This file is not (yet) part of GNU Emacs.
@@ -37,16 +37,29 @@
   "The list of tables available in YQL.")
 
 (defun yql-yahoo-search (query)
+  (interactive "sQuery string?: ")
   (let ((result (yql-filter 'result
                             (yql-select "title,abstract,url" "search.web"
                                         (concat (format "query=\"%s\"" query)
                                                 "LIMIT 5")))))
-    (with-output-to-temp-buffer "*Search Results*"
+    (save-excursion
+      (set-buffer (get-buffer-create "*YQL Search Results*"))
+      (setq buffer-read-only nil)
+      (delete-region (point-min) (point-max))
       (dolist (item result)
         (let ((title (yql-filter 'title item))
               (abstract (yql-filter 'abstract item))
               (url (yql-filter 'url item)))
-          (print (concat title "\n  " url "\n  " abstract)))))))
+          (insert (concat title "\n  "
+                          (if (not (string= abstract ""))
+                              (concat abstract "\n  "))
+                          url "\n"))))
+      (local-set-key (kbd "q") 'kill-this-buffer)
+      (define-key goto-address-highlight-keymap (kbd "RET") 'goto-address-at-point)
+      (goto-address)
+      )
+    (pop-to-buffer "*YQL Search Results*")
+    ))
 
 (defmacro yql (query &rest args)
   "Constructs a function call based on `query', which should be one of
