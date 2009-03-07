@@ -124,6 +124,7 @@ associated to `symbol', where the JSON is `list'."
 (defun yql-escape-query-string (string)
   (let* ((string (replace-regexp-in-string "\\ " "%20" string))
          (string (replace-regexp-in-string "\"" "%22" string))
+         (string (replace-regexp-in-string "\&" "%26" string))
          (string (replace-regexp-in-string "\'" "%27" string)))
     string))
 
