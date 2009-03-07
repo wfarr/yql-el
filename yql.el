@@ -33,6 +33,14 @@
 
 (defvar yql-data-tables (yql-show))
 
+(defmacro yql (query &rest args)
+  `(cond ((eq ,query 'show)
+          (yql-show))
+         ((eq ,query 'desc)
+          (yql-desc ,args))
+         ((eq ,query 'select)
+          (yql-select ,args))))
+
 (defun yql-show ()
   (let ((list (yql-make-request "show tables")))
     (yql-select-symbol 'table list)))
@@ -44,14 +52,6 @@
   (yql-select-symbol
    selector
    (yql-make-request (concat "SELECT " target " FROM " table " " args))))
-
-(defmacro yql (query &rest args)
-  `(cond ((eq ,query 'show)
-          (yql-show))
-         ((eq ,query 'desc)
-          (yql-desc ,args))
-         ((eq ,query 'select)
-          (yql-select ,args))))
 
 (defun yql-select-symbol (symbol list)
   (let ((result (yql-find-symbol-val-in-list symbol list)))
@@ -66,6 +66,15 @@
          (string (replace-regexp-in-string "\"" "%22" string))
          (string (replace-regexp-in-string "\'" "%27" string)))
     string))
+
+(defun yql-find-symbol-val-in-list (symbol list)
+  (cond ((null list) nil)
+        ((not (listp list)) nil)
+        ((eq (car list) symbol) (cdr list))
+        ((listp (car list)) (or (yql-find-symbol-val-in-list symbol (car list))
+                                (yql-find-symbol-val-in-list symbol (cdr list))))
+        (t
+         (yql-find-symbol-val-in-list symbol (cdr list)))))
 
 (defun yql-make-request (string)
   "Takes in a string and makes it all HTML-friendly and such, and then sends it on to Yahoo!'s YQL servers.
@@ -83,23 +92,14 @@ It's neat bee tee dubz."
           (json-read-from-string (match-string 1))
           ))))
 
-(defun yql-find-symbol-val-in-list (symbol list)
-  (cond ((null list) nil)
-        ((not (listp list)) nil)
-        ((eq (car list) symbol) (cdr list))
-        ((listp (car list)) (or (yql-find-symbol-val-in-list symbol (car list))
-                                (yql-find-symbol-val-in-list symbol (cdr list))))
-        (t
-         (yql-find-symbol-val-in-list symbol (cdr list)))))
+;; Tests
 
 (defun test-yql ()
   "Test cases that should work by 4pm tomorrow."
   (print
    (yql-select-symbol 'temp (yql-make-request "select item.condition.temp from weather.forecast where location=30313")))
-;;   (yql select (temp (condition item)) from (forecast weather) where (=: location 30313)))
   (print
-   (yql-select-symbol 'place (yql-make-request "select latitude from flickr.places where query=\"north beach\"")))
-;;   (yql select * from (places flickr) where (and: (=: query "north beach") (>: latitude 38))))
-)
+   (yql-select-symbol 'place (yql-make-request "select latitude from flickr.places where query=\"north beach\""))))
+
 
 (provide 'yql)
