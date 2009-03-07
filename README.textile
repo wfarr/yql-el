@@ -27,17 +27,8 @@ Show:
 
     (yql 'show)
 
-Note that @yql@ is just a macro that expands to one of @yql-select@, @yql-desc@, or @yql-show@.
+Note that @yql@ is just a macro that expands to one of @yql-select@, @yql-filter@, @yql-desc@, or @yql-show@.
 So, feel free to just use those like you'd expect.
-
-However, you don't always want "just a tree" of data. That's where @yql-filter@ comes in.
-
-    (yql 'filter 'title
-         (yql 'filter
-              'item
-              (yql 'select
-                   "title,pubDate" "rss"
-                   "url='http://twitter.com/statuses/user_timeline/wfarr.rss' LIMIT 1"))) ;; would return the text of my most recent tweet
 
 As you can see, it's pretty useful. For some examples of how to use these, check out
 @yql-twitter-stream@ or @yql-yahoo-stocks@.
@@ -50,5 +41,15 @@ Finds all the places in flickr.places with city name 'Atlanta':
          (yql 'select
               "content" "flickr.places" "query=\"Atlanta\""))
     ;; ("Atlanta, Georgia, United States" "Atlanta, Texas, United States" "Atlanta, Ohio, United States" "Atlanta, Missouri, United States" "Washington, United States" "Atlanta, Idaho, United States" "Atlanta, New York, United States" "Atlanta, Michigan, United States" "Atlanta, Kansas, United States" "Atlanta, Indiana, United States" "Atlanta, Nebraska, United States" "Atlanta, Louisiana, United States" ...)
+
+Fetching the most recent tweet for a given user (with a public profile):
+
+    (yql 'filter 'title
+         (yql 'filter
+              'item
+              (yql 'select
+                   "title,pubDate" "rss"
+                   "url='http://twitter.com/statuses/user_timeline/wfarr.rss' LIMIT 1")))
+    ;; "wfarr: @20seven @joshjgt and I are working on our Yahoo Hack Week project, by creating an elisp library for it! http://tinyurl.com/c2eddc"
 
 Some other examples will be here. If not, pretend.
