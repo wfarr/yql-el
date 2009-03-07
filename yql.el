@@ -48,14 +48,14 @@
   "Makes a GET request to YQL's public-facing api for 'show tables'.
 
 NOTE: This is because 'tables' is the only valid argument for 'show' in YQL."
-  (let ((list (yql-make-request "show tables")))
-    (yql-select-symbol 'table list)))
+  (let ((list (yql-send-request "show tables")))
+    (yql-filter-to-symbol 'table list)))
 
 (defun yql-desc (table)
   "Makes a GET request to YQL's public-facing api for 'desc `table'', where
 table is any item in `yql-data-tables'."
   (if (memq table yql-data-tables)
-      (yql-select-symbol 'table (yql-make-request (concat "DESC " table)))
+      (yql-filter-to-symbol 'table (yql-send-request (concat "DESC " table)))
     (error "Should be one of `yql-data-tables'!")))
 
 (defun yql-select (selector target table &optional qualifiers)
@@ -67,40 +67,40 @@ the list containing `selector' as the `car' of said list.
 Valid qualifiers depend upon YQL's APIs per-table, while `table' and `target'
 are determined by `yql-data-tables' and the contents of said tables."
   (let ((qualifiers (if qualifiers (concat " WHERE " qualifiers) "")))
-    (yql-select-symbol
+    (yql-filter-to-symbol
      selector
-     (yql-make-request (concat "SELECT " target " FROM " table qualifiers)))))
+     (yql-send-request (concat "SELECT " target " FROM " table qualifiers)))))
 
-(defun yql-select-symbol (symbol list)
-  (let ((result (yql-find-symbol-val-in-list symbol list)))
+(defun yql-filter-to-symbol (symbol list)
+  (let ((result (yql-search-for-symbol symbol list)))
     (if (or (typep result 'list)
             (typep result 'string)
             (typep result 'number))
         result
       (coerce result 'list))))
 
-(defun yql-clean-up-query-string (string)
+(defun yql-escape-query-string (string)
   (let* ((string (replace-regexp-in-string "\\ " "%20" string))
          (string (replace-regexp-in-string "\"" "%22" string))
          (string (replace-regexp-in-string "\'" "%27" string)))
     string))
 
-(defun yql-find-symbol-val-in-list (symbol list)
+(defun yql-search-for-symbol (symbol list)
   (cond ((null list) nil)
         ((not (listp list)) nil)
         ((eq (car list) symbol) (cdr list))
-        ((listp (car list)) (or (yql-find-symbol-val-in-list symbol (car list))
-                                (yql-find-symbol-val-in-list symbol (cdr list))))
+        ((listp (car list)) (or (yql-search-for-symbol symbol (car list))
+                                (yql-search-for-symbol symbol (cdr list))))
         (t
-         (yql-find-symbol-val-in-list symbol (cdr list)))))
+         (yql-search-for-symbol symbol (cdr list)))))
 
-(defun yql-make-request (string)
+(defun yql-send-request (string)
   "Performs a GET request based on a query string. The string is escaped for spaces,
 single-quotes, and double-quotes before performing the request.
 
 Returns an S-expression representation of the JSON data returned."
   (let ((yql-public-str "http://query.yahooapis.com/v1/public/yql?q=")
-        (target (yql-clean-up-query-string string))
+        (target (yql-escape-query-string string))
         (url-max-redirections 0)
         (url-request-method "GET"))
     (with-current-buffer
@@ -115,9 +115,9 @@ Returns an S-expression representation of the JSON data returned."
 
 (defun test-yql ()
   (print
-   (yql-select-symbol 'temp (yql-make-request "select item.condition.temp from weather.forecast where location=30313")))
+   (yql-filter-to-symbol 'temp (yql-send-request "select item.condition.temp from weather.forecast where location=30313")))
   (print
-   (yql-select-symbol 'place (yql-make-request "select latitude from flickr.places where query=\"north beach\""))))
+   (yql-filter-to-symbol 'place (yql-send-request "select latitude from flickr.places where query=\"north beach\""))))
 
 
 (provide 'yql)
