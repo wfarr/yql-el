@@ -31,9 +31,12 @@
 (require 'json)
 (require 'url)
 
-(defvar yql-data-tables (yql-show))
+(defvar yql-data-tables (yql-show)
+  "The list of tables available in YQL.")
 
 (defmacro yql (query &rest args)
+  "Constructs a function call based on `query', which should be one of
+`show', `desc', or `select'."
   `(cond ((eq ,query 'show)
           (yql-show))
          ((eq ,query 'desc)
@@ -42,16 +45,31 @@
           (yql-select ,args))))
 
 (defun yql-show ()
+  "Makes a GET request to YQL's public-facing api for 'show tables'.
+
+NOTE: This is because 'tables' is the only valid argument for 'show' in YQL."
   (let ((list (yql-make-request "show tables")))
     (yql-select-symbol 'table list)))
 
 (defun yql-desc (table)
-  (yql-select-symbol 'table (yql-make-request (concat "DESC " table))))
+  "Makes a GET request to YQL's public-facing api for 'desc `table'', where
+table is any item in `yql-data-tables'."
+  (if (memq table yql-data-tables)
+      (yql-select-symbol 'table (yql-make-request (concat "DESC " table)))
+    (error "Should be one of `yql-data-tables'!")))
 
-(defun yql-select (selector target table &rest args)
-  (yql-select-symbol
-   selector
-   (yql-make-request (concat "SELECT " target " FROM " table " " args))))
+(defun yql-select (selector target table &optional qualifiers)
+  "Makes a GET request to YQL's public-facing api for:
+    'select `target' from `table' [where `qualifiers']'
+and then uses `selector' to perform a depth-first search to find
+the list containing `selector' as the `car' of said list.
+
+Valid qualifiers depend upon YQL's APIs per-table, while `table' and `target'
+are determined by `yql-data-tables' and the contents of said tables."
+  (let ((qualifiers (if qualifiers (concat " WHERE " qualifiers) "")))
+    (yql-select-symbol
+     selector
+     (yql-make-request (concat "SELECT " target " FROM " table qualifiers)))))
 
 (defun yql-select-symbol (symbol list)
   (let ((result (yql-find-symbol-val-in-list symbol list)))
@@ -77,9 +95,10 @@
          (yql-find-symbol-val-in-list symbol (cdr list)))))
 
 (defun yql-make-request (string)
-  "Takes in a string and makes it all HTML-friendly and such, and then sends it on to Yahoo!'s YQL servers.
+  "Performs a GET request based on a query string. The string is escaped for spaces,
+single-quotes, and double-quotes before performing the request.
 
-It's neat bee tee dubz."
+Returns an S-expression representation of the JSON data returned."
   (let ((yql-public-str "http://query.yahooapis.com/v1/public/yql?q=")
         (target (yql-clean-up-query-string string))
         (url-max-redirections 0)
@@ -95,7 +114,6 @@ It's neat bee tee dubz."
 ;; Tests
 
 (defun test-yql ()
-  "Test cases that should work by 4pm tomorrow."
   (print
    (yql-select-symbol 'temp (yql-make-request "select item.condition.temp from weather.forecast where location=30313")))
   (print
