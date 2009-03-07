@@ -77,6 +77,43 @@
       (local-set-key (kbd "q") 'kill-this-buffer))
     (pop-to-buffer "*YQL Stock Results*")))
 
+(defun yql-twitter-stream (user &optional limit)
+  "Fetches a the twitter stream for `user' with public stream.
+`limit' is 10 by default, and can go up to 20."
+  (interactive "sWhich user?: ")
+  (let ((result
+         (yql-filter
+          'item
+          (yql-select
+           "title,pubDate" "rss"
+           (format "url='http://twitter.com/statuses/user_timeline/%s.rss' LIMIT %s" user (if limit limit 10))))))
+    (save-excursion
+      (set-buffer (get-buffer-create "*YQL Twitter Stream*"))
+      (setq buffer-read-only nil)
+      (delete-region (point-min) (point-max))
+      (insert (concat "Tweets from " user ":\n\n"))
+      (dolist (item result)
+        (let ((tweet-time
+               (eval (cons 'encode-time (parse-time-string (yql-filter 'pubDate item)))))
+              (tweet-text
+               (replace-regexp-in-string
+                (format "^%s: " user) ""
+                (yql-filter 'title item))))
+          (insert
+           (concat
+            "  * ("
+            (cond ((string= (format-time-string "%D")
+                            (format-time-string "%D" tweet-time))
+                   (format-time-string "%I:%M %p" tweet-time))
+                  ((eq (cadddr (decode-time tweet-time))
+                       (- (cadddr (decode-time (current-time))) 1))
+                   (format-time-string "%I:%M %p, Yesterday" tweet-time))
+                  (t
+                   (format-time-string "%I:%M %p %D" tweet-time)))
+            ") " tweet-text "\n"))))
+      (local-set-key (kbd "q") 'kill-this-buffer))
+    (pop-to-buffer "*YQL Twitter Stream*")))
+
 (defmacro yql (query &rest args)
   "Constructs a function call based on `query', which should be one of
 `show', `desc', or `select'."
