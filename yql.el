@@ -72,3 +72,5 @@ It's neat bee tee dubz."
    (yql-select-symbol 'place (yql-make-request "select latitude from flickr.places where query=\"north beach\"")))
 ;;   (yql select * from (places flickr) where (and: (=: query "north beach") (>: latitude 38))))
 )
+
+(provide 'yql)
