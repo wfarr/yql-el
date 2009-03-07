@@ -56,14 +56,13 @@ It's neat bee tee dubz."
 
 (defun yql-find-symbol-val-in-list (symbol list)
   (cond ((null list) nil)
+        ((not (listp list)) nil)
         ((eq (car list) symbol) (cdr list))
-        ((listp (car list))
-         (yql-find-symbol-val-in-list symbol (car list)))
-        ((listp (cdr list))
-         (yql-find-symbol-val-in-list symbol (cdr list)))
+        ((listp (car list)) (or (yql-find-symbol-val-in-list symbol (car list))
+                                (yql-find-symbol-val-in-list symbol (cdr list))))
         (t
-         nil)))
-  
+         (yql-find-symbol-val-in-list symbol (cdr list)))))
+
 (defun test-yql ()
   "Test cases that should work by 4pm tomorrow."
   (print
