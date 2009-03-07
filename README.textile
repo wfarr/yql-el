@@ -25,7 +25,7 @@ Show:
 Note that @yql@ is just a macro that expands to one of @yql-select@, @yql-desc@, or @yql-show@.
 So, feel free to just use those like you'd expect.
 
-However, you don't always want "just a tree" of data. That's where yql-filter comes in.
+However, you don't always want "just a tree" of data. That's where @yql-filter@ comes in.
 
     (yql-filter
      'title
