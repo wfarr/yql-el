@@ -1,0 +1,36 @@
+h2. About
+
+YQL.el is a simple interface to "YQL (Yahoo! Query Language)":http://developer.yahoo.com/yql/,
+a developer tool with a super-neat API which provides access to many Yahoo! web services
+(such as flickr). The goal is to provide a simple, somewhat Lispy way to interact with YQL
+without having to load up a browser (a lot of Emacs users live there -- trust us!).
+
+h2. Usage
+
+YQL supports three main statements: show, desc, and select (kind of like other *QLs).
+So too does YQL.el.
+
+Select:
+
+    (yql 'select "item.condition.temp" "weather.forecast" "location=30313")
+
+Desc:
+
+    (yql 'desc "flickr")
+
+Show:
+
+    (yql 'show)
+
+However, you don't always want "just a tree" of data. That's where yql-filter comes in.
+
+    (yql-filter
+     'title
+     (yql-filter
+      'item
+      (yql-select
+       "title,pubDate" "rss"
+       "url='http://twitter.com/statuses/user_timeline/wfarr.rss' LIMIT 1"))) ;; would return the text of one of my tweets
+
+As you can see, it's pretty useful. For some examples of how to use these, check out
+yql-twitter-stream or yql-yahoo-stocks.
