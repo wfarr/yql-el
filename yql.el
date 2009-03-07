@@ -53,8 +53,8 @@
                               (concat abstract "\n  "))
                           url "\n"))))
       (local-set-key (kbd "q") 'kill-this-buffer)
-      (define-key goto-address-highlight-keymap (kbd "RET") 'goto-address-at-point)
-      (goto-address))
+      (goto-address)
+      (define-key goto-address-highlight-keymap (kbd "RET") 'goto-address-at-point))
     (pop-to-buffer "*YQL Search Results*")))
 
 (defun yql-yahoo-stocks (stocks)
