@@ -14,9 +14,9 @@
 (require 'json)
 (require 'url)
 
-(defvar yql-data-tables (yql-get-data-tables))
+(defvar yql-data-tables (yql-show))
 
-(defun yql-get-data-tables ()
+(defun yql-show ()
   (let ((list (yql-make-request "show tables")))
     (yql-select-symbol 'table list)))
 
