@@ -20,18 +20,19 @@
   (let ((list (yql-make-request "show tables")))
     (yql-select-symbol 'table list)))
 
-(defmacro yql-desc (table)
-  `(yql-select-symbol 'table (yql-make-request (concat "DESC " ,table))))
+(defun yql-desc (table)
+  (yql-select-symbol 'table (yql-make-request (concat "DESC " table))))
 
-(defmacro yql-select (args)
-  ;; HARD HARD HARD STUFF
-)
+(defun yql-select (selector target table &rest args)
+  (yql-select-symbol
+   selector
+   (yql-make-request (concat "SELECT " target " FROM " table " " args))))
 
-(defmacro yql (query &optional args)
-  `(cond ((eq ,query 'desc)
-          (yql-desc ,args))
-         ((eq ,query 'show)
+(defmacro yql (query &rest args)
+  `(cond ((eq ,query 'show)
           (yql-show))
+         ((eq ,query 'desc)
+          (yql-desc ,args))
          ((eq ,query 'select)
           (yql-select ,args))))
 
