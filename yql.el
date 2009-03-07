@@ -34,6 +34,7 @@
 (require 'url)
 
 (defun yql-yahoo-search (query)
+  "Perform a Yahoo! search with `query'."
   (interactive "sQuery string?: ")
   (let ((result (yql-filter 'result
                             (yql-select "title,abstract,url" "search.web"
