@@ -11,6 +11,7 @@
 
 ;; Use (require 'yql)
 
+(require 'json)
 (require 'url)
 
 (defvar yql-data-tables (yql-get-data-tables))
