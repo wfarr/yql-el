@@ -36,6 +36,18 @@
 (defvar yql-data-tables (yql-show)
   "The list of tables available in YQL.")
 
+(defun yql-yahoo-search (query)
+  (let ((result (yql-filter 'result
+                            (yql-select "title,abstract,url" "search.web"
+                                        (concat (format "query=\"%s\"" query)
+                                                "LIMIT 5")))))
+    (with-output-to-temp-buffer "*Search Results*"
+      (dolist (item result)
+        (let ((title (yql-filter 'title item))
+              (abstract (yql-filter 'abstract item))
+              (url (yql-filter 'url item)))
+          (print (concat title "\n  " url "\n  " abstract)))))))
+
 (defmacro yql (query &rest args)
   "Constructs a function call based on `query', which should be one of
 `show', `desc', or `select'."
