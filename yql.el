@@ -25,7 +25,12 @@
 )
 
 (defun yql-select-symbol (symbol list)
-  (coerce (yql-find-symbol-val-in-list symbol list) 'list))
+  (let ((result (yql-find-symbol-val-in-list symbol list)))
+    (if (or (typep result 'list)
+            (typep result 'string)
+            (typep result 'number))
+        result
+      (coerce result 'list))))
 
 (defun yql-clean-up-query-string (string)
   (let* ((string (replace-regexp-in-string "\\ " "%20" string))
