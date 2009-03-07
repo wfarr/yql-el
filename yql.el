@@ -118,13 +118,15 @@ comma-separated list (with or without spaces)."
 
 (defmacro yql (query &rest args)
   "Constructs a function call based on `query', which should be one of
-`show', `desc', or `select'."
+`show', `desc', `select', or `filter'."
   `(cond ((eq ,query 'show)
           (yql-show))
          ((eq ,query 'desc)
-          (yql-desc ,args))
+          ,(cons 'yql-desc args))
          ((eq ,query 'select)
-          (yql-select ,args))))
+          ,(cons 'yql-select args))
+         ((eq ,query 'filter)
+          ,(cons 'yql-filter args))))
 
 (defun yql-show ()
   "Makes a GET request to YQL's public-facing api for 'show tables'.
