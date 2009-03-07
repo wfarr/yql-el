@@ -128,7 +128,7 @@ comma-separated list (with or without spaces)."
          ((eq ,query 'filter)
           ,(cons 'yql-filter args))
          (t
-          (error "`query' must be on of `show', `desc', `select', or `filter'!"))))
+          (error "`query' must be one of '`show', '`desc', '`select', or '`filter'!"))))
 
 (defun yql-show ()
   "Makes a GET request to YQL's public-facing api for 'show tables'.
