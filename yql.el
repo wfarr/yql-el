@@ -23,6 +23,9 @@
   ;; Holy fuck this part will be hard.
 )
 
+(defun yql-select-symbol (symbol list)
+  (coerce (yql-find-symbol-val-in-list symbol list) 'list))
+
 (defun yql-clean-up-query-string (string)
   (let* ((string (replace-regexp-in-string "\\ " "%20" string))
          (string (replace-regexp-in-string "\"" "%22" string))
@@ -44,6 +47,16 @@ It's neat bee tee dubz."
           (re-search-backward "^\\(.*\\)$")
           (json-read-from-string (match-string 1))
           ))))
+
+(defun yql-find-symbol-val-in-list (symbol list)
+  (cond ((null list) nil)
+        ((eq (car list) symbol) (cdr list))
+        ((listp (car list))
+         (yql-find-symbol-val-in-list symbol (car list)))
+        ((listp (cdr list))
+         (yql-find-symbol-val-in-list symbol (cdr list)))
+        (t
+         nil)))
   
 (defun test-yql ()
   "Test cases that should work by 4pm tomorrow."
