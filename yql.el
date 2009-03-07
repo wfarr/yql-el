@@ -17,7 +17,8 @@
 (defvar yql-data-tables (yql-get-data-tables))
 
 (defun yql-get-data-tables ()
-  (yql show tables))
+  (let ((list (yql-make-request "show tables")))
+    (yql-select-symbol 'table list)))
 
 (defmacro yql (query)
   ;; Holy fuck this part will be hard.
