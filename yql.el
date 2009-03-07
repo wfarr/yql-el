@@ -54,18 +54,17 @@
                           url "\n"))))
       (local-set-key (kbd "q") 'kill-this-buffer)
       (define-key goto-address-highlight-keymap (kbd "RET") 'goto-address-at-point)
-      (goto-address)
-      )
-    (pop-to-buffer "*YQL Search Results*")
-    ))
+      (goto-address))
+    (pop-to-buffer "*YQL Search Results*")))
 
 (defun yql-yahoo-stocks (stocks)
   (interactive "sStocks (Comma-separated)?: ")
   (let ((result
          (yql-filter 'row
                      (yql-select
-                      "*" "csv" (format "url='http://download.finance.yahoo.com/d/quotes.csv?s=%s&f=sl1d1c1&e=.csv' and columns='symbol,price,date,change'"
-                                        stocks)))))
+                      "*" "csv"
+                      (format "url='http://download.finance.yahoo.com/d/quotes.csv?s=%s&f=sl1d1c1&e=.csv' and columns='symbol,price,date,change'"
+                              stocks)))))
     (save-excursion
       (set-buffer (get-buffer-create "*YQL Stock Results*"))
       (setq buffer-read-only nil)
@@ -151,16 +150,7 @@ Returns an S-expression representation of the JSON data returned."
         (let ((str (buffer-substring (point-min) (point-max))))
           (end-of-buffer)
           (re-search-backward "^\\(.*\\)$")
-          (json-read-from-string (match-string 1))
-          ))))
-
-;;; Tests
-
-(defun test-yql ()
-  (print
-   (yql-filter 'temp (yql-send-request "select item.condition.temp from weather.forecast where location=30313")))
-  (print
-   (yql-filter 'place (yql-send-request "select latitude from flickr.places where query=\"north beach\""))))
+          (json-read-from-string (match-string 1))))))
 
 (defvar yql-data-tables (yql-show)
   "The list of tables available in YQL.")
