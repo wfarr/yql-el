@@ -154,7 +154,7 @@ Returns an S-expression representation of the JSON data returned."
           (json-read-from-string (match-string 1))
           ))))
 
-;; Tests
+;;; Tests
 
 (defun test-yql ()
   (print
