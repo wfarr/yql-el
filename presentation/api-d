@@ -1,0 +1,21 @@
+
+
+          The two most important parts of the API are 'select' and 'filter'.
+
+                                     Example:
+   (yql 'filter 'temp
+        (yql 'select "item.condition.temp" "weather.forecast" "location=30332"))
+
+                                     Returns:
+                                       "72"
+
+
+
+           (yql 'filter symbol list) simply performs a depth first search.
+         Naturally, you can chain filters together when dealing with queries
+                          that return lots of nested data.
+
+
+
+
+
