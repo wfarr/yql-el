@@ -22,15 +22,21 @@
   ;; Holy fuck this part will be hard.
 )
 
-(defun make-yql-request (string)
+(defun yql-clean-up-query-string (string)
+  (let* ((string (replace-regexp-in-string "\\ " "%20" string))
+         (string (replace-regexp-in-string "\"" "%22" string))
+         (string (replace-regexp-in-string "\'" "%27" string)))
+    string))
+
+(defun yql-make-request (string)
   "Takes in a string and makes it all HTML-friendly and such, and then sends it on to Yahoo!'s YQL servers.
 
 It's neat bee tee dubz."
   (let ((yql-public-str "http://query.yahooapis.com/v1/public/yql?q=")
-        (target (replace-regexp-in-string "\\ " "%20" string))
+        (target (yql-clean-up-query-string string))
         (url-max-redirections 0)
         (url-request-method "GET"))
-    (url-retrieve-synchronously (concat yql-public-str target)))
+    (url-retrieve-synchronously (concat yql-public-str target "&format=json")))
     )
   
 (defun test-yql ()
