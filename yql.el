@@ -59,6 +59,25 @@
     (pop-to-buffer "*YQL Search Results*")
     ))
 
+(defun yql-yahoo-stocks (stocks)
+  (interactive "sStocks (Comma-separated)?: ")
+  (let ((result
+         (yql-filter 'row
+                     (yql-select
+                      "*" "csv" (format "url='http://download.finance.yahoo.com/d/quotes.csv?s=%s&f=sl1d1c1&e=.csv' and columns='symbol,price,date,change'"
+                                        stocks)))))
+    (save-excursion
+      (set-buffer (get-buffer-create "*YQL Stock Results*"))
+      (setq buffer-read-only nil)
+      (delete-region (point-min) (point-max))
+      (dolist (item result)
+        (let ((symbol (yql-filter 'symbol item))
+              (price (yql-filter 'price item))
+              (change (yql-filter 'change item)))
+          (insert (concat symbol "\n  Price: " price "\n  Change: " change "\n"))))
+      (local-set-key (kbd "q") 'kill-this-buffer))
+    (pop-to-buffer "*YQL Stock Results*")))
+
 (defmacro yql (query &rest args)
   "Constructs a function call based on `query', which should be one of
 `show', `desc', or `select'."
