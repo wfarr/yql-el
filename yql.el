@@ -58,6 +58,8 @@
     (pop-to-buffer "*YQL Search Results*")))
 
 (defun yql-yahoo-stocks (stocks)
+  "Returns some basic information about whatever `stocks' you list (by abbreviation) in a
+comma-separated list (with or without spaces)."
   (interactive "sStocks (Comma-separated)?: ")
   (let ((result
          (yql-filter 'row
@@ -156,6 +158,7 @@ associated to `symbol', where the JSON is `list'."
       (coerce result 'list))))
 
 (defun yql-escape-query-string (string)
+  "Used internally. You probably won't want to use it."
   (let* ((string (replace-regexp-in-string "\\ " "%20" string))
          (string (replace-regexp-in-string "\"" "%22" string))
          (string (replace-regexp-in-string "\&" "%26" string))
@@ -163,6 +166,7 @@ associated to `symbol', where the JSON is `list'."
     string))
 
 (defun yql-search-for-symbol (symbol list)
+  "Used internally. You probably won't want to use it."
   (cond ((null list) nil)
         ((not (listp list)) nil)
         ((eq (car list) symbol) (cdr list))
@@ -172,8 +176,8 @@ associated to `symbol', where the JSON is `list'."
          (yql-search-for-symbol symbol (cdr list)))))
 
 (defun yql-send-request (string)
-  "Performs a GET request based on a query string. The string is escaped for spaces,
-single-quotes, and double-quotes before performing the request.
+  "Performs a GET request based on a query string. The string is escaped
+before performing the request.
 
 Returns an S-expression representation of the JSON data returned."
   (let ((yql-public-str "http://query.yahooapis.com/v1/public/yql?q=")
