@@ -22,7 +22,7 @@ Show:
 
     (yql 'show)
 
-Note that `yql` is just a macro that expands to one of `yql-select`, `yql-desc`, or `yql-show`.
+Note that @yql@ is just a macro that expands to one of @yql-select@, @yql-desc@, or @yql-show@.
 So, feel free to just use those like you'd expect.
 
 However, you don't always want "just a tree" of data. That's where yql-filter comes in.
@@ -36,4 +36,4 @@ However, you don't always want "just a tree" of data. That's where yql-filter co
        "url='http://twitter.com/statuses/user_timeline/wfarr.rss' LIMIT 1"))) ;; would return the text of my most recent tweet
 
 As you can see, it's pretty useful. For some examples of how to use these, check out
-`yql-twitter-stream` or `yql-yahoo-stocks`.
+@yql-twitter-stream@ or @yql-yahoo-stocks@.
