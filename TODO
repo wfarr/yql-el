@@ -1,5 +1,6 @@
 * DONE: Parse the query as a string
 * DONE: Get the query to return JSON
 * DONE: Parse the JSON into manageable S-Expressions
+* DONE: Get filtering on JSON to work
 * Make the parent macro properly format a query into a query string
 * Whatever else sounds good
