@@ -37,9 +37,9 @@
   "Perform a Yahoo! search with `query'."
   (interactive "sQuery string?: ")
   (let ((result (yql-filter 'result
-                            (yql-select "title,abstract,url" "search.web"
-                                        (concat (format "query=\"%s\"" query)
-                                                "LIMIT 5")))))
+                            (yql select title,abstract,url search.web
+                                 (concat (format "query=\"%s\"" query)
+                                         "LIMIT 5")))))
     (save-excursion
       (set-buffer (get-buffer-create "*YQL Search Results*"))
       (setq buffer-read-only nil)
@@ -63,10 +63,9 @@ comma-separated list (with or without spaces)."
   (interactive "sStocks (Comma-separated)?: ")
   (let ((result
          (yql-filter 'row
-                     (yql-select
-                      "*" "csv"
-                      (format "url='http://download.finance.yahoo.com/d/quotes.csv?s=%s&f=sl1d1c1&e=.csv' and columns='symbol,price,date,change'"
-                              stocks)))))
+                     (yql select * csv
+                          (format "url='http://download.finance.yahoo.com/d/quotes.csv?s=%s&f=sl1d1c1&e=.csv' and columns='symbol,price,date,change'"
+                                  stocks)))))
     (save-excursion
       (set-buffer (get-buffer-create "*YQL Stock Results*"))
       (setq buffer-read-only nil)
@@ -91,9 +90,8 @@ comma-separated list (with or without spaces)."
   (let ((result
          (yql-filter
           'item
-          (yql-select
-           "title,pubDate" "rss"
-           (format "url='http://twitter.com/statuses/user_timeline/%s.rss' LIMIT %s" user (if limit limit 10))))))
+          (yql select title,pubDate rss
+               (format "url='http://twitter.com/statuses/user_timeline/%s.rss' LIMIT %s" user (if limit limit 10))))))
     (save-excursion
       (set-buffer (get-buffer-create "*YQL Twitter Stream*"))
       (setq buffer-read-only nil)
@@ -123,17 +121,21 @@ comma-separated list (with or without spaces)."
 
 (defmacro yql (query &rest args)
   "Constructs a function call based on `query', which should be one of
-`show', `desc', `select', or `filter'."
-  `(cond ((eq ,query 'show)
-          (yql-show))
-         ((eq ,query 'desc)
-          ,(cons 'yql-desc args))
-         ((eq ,query 'select)
-          ,(cons 'yql-select args))
-         ((eq ,query 'filter)
-          ,(cons 'yql-filter args))
-         (t
-          (error "`query' must be one of '`show', '`desc', '`select', or '`filter'!"))))
+`show', `desc', or `select'."
+  (unless (member query '(show desc select))
+    (error "`query' must be one of `show', `desc', or `select'!"))
+  (cond ((eq query 'show)
+         (quote (yql-show)))
+        (args
+         (let ((query-args
+                (mapcar (lambda (x)
+                          (coerce (symbol-name x) 'string))
+                        args)))
+           `(cond ((eq (quote ,query) 'desc)
+                   (yql-desc ,@query-args))
+                  ((eq (quote ,query) 'select)
+                   (yql-select ,@query-args)))))
+        (t (error "`desc' and `select' require args"))))
 
 (defun yql-show ()
   "Makes a GET request to YQL's public-facing api for 'show tables'.
