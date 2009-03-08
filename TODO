@@ -1,6 +1,13 @@
+0.2
+* Make yql macro accept ascii rather than just throwing strings at it
+* More useful applications
+* Keybindings via a mode-map
+* More ways of handling the data in question
+* Make changes necessary for inclusion in ELPA
+* General cleanup of code
+0.1
 * DONE: Parse the query as a string
 * DONE: Get the query to return JSON
 * DONE: Parse the JSON into manageable S-Expressions
 * DONE: Get filtering on JSON to work
 * DONE: Make the parent macro properly format a query into a query string
-* DONE: Whatever else sounds good
