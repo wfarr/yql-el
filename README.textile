@@ -6,7 +6,8 @@ a developer tool with a super-neat API which provides access to many Yahoo! web 
 without having to load up a browser (a lot of Emacs users live there -- trust us!).
 
 This project was implemented as part of "Yahoo! University Hack Day":http://developer.yahoo.com/hacku/gt.html
-at Georgia Tech, March 2009. We were reimbursed with lots of free caffeine and sugar.
+at Georgia Tech, March 2009 and won the award for "Hack for Good".
+We were reimbursed with lots of free caffeine and sugar.
 We would like to thank the Yahoo! guys for rocking (and for the drinks and food).
 Our dentists are probably very upset with them though.
 
