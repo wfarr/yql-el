@@ -159,6 +159,8 @@ should be valid for `table'."
 (defun yql-filter (symbol list)
   "Filters any JSON returned from a `yql-send-request' call for the value(s)
 associated to `symbol', where the JSON is `list'."
+  (if (eq (type-of symbol) 'string)
+      (setq symbol (intern symbol)))
   (let ((result (yql-search-for-symbol symbol list)))
     (if (or (typep result 'list)
             (typep result 'string)
