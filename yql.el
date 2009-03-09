@@ -129,7 +129,12 @@ comma-separated list (with or without spaces)."
         (args
          (let ((query-args
                 (mapcar (lambda (x)
-                          (coerce (symbol-name x) 'string))
+                          (cond ((stringp x) x)
+                                ((and (listp x)
+                                      (functionp (car x)))
+                                 (eval x))
+                                (t
+                                 (coerce (symbol-name x) 'string))))
                         args)))
            `(cond ((eq (quote ,query) 'desc)
                    (yql-desc ,@query-args))
