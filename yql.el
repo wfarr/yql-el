@@ -86,12 +86,12 @@ should be valid for `table'."
 associated to `symbol', where the JSON is `list'."
   (if (eq (type-of symbol) 'string)
       (setq symbol (intern symbol)))
-  (let ((result (yql-search-for-symbol symbol list)))
-    (if (or (typep result 'list)
-            (typep result 'string)
-            (typep result 'number))
-        result
-      (coerce result 'list))))
+  `(let ((result ,(yql-search-for-symbol symbol list)))
+     (if (or (typep result 'list)
+             (typep result 'string)
+             (typep result 'number))
+         result
+       (coerce result 'list))))
 
 (defun yql-escape-query-string (string)
   "Used internally. You probably won't want to use it."
