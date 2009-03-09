@@ -158,17 +158,15 @@ should be valid for `table'."
   (let ((qualifiers (if qualifiers (concat " WHERE " (concatenate 'string qualifiers)) "")))
     (yql-send-request (concat "SELECT " target " FROM " table qualifiers))))
 
-(defun yql-filter (symbol list)
+(defmacro yql-filter (symbol list)
   "Filters any JSON returned from a `yql-send-request' call for the value(s)
 associated to `symbol', where the JSON is `list'."
-  (if (eq (type-of symbol) 'string)
-      (setq symbol (intern symbol)))
-  (let ((result (yql-search-for-symbol symbol list)))
-    (if (or (typep result 'list)
-            (typep result 'string)
-            (typep result 'number))
-        result
-      (coerce result 'list))))
+  `(let ((result (yql-search-for-symbol ,symbol ,list)))
+     (if (or (typep result 'list)
+             (typep result 'string)
+             (typep result 'number))
+         result
+       (coerce result 'list))))
 
 (defun yql-escape-query-string (string)
   "Used internally. You probably won't want to use it."
