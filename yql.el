@@ -36,8 +36,8 @@
 (defmacro yql (query &rest args)
   "Constructs a function call based on `query', which should be one of
 `show', `desc', or `select'."
-  (unless (member query '(show desc select))
-    (error "`query' must be one of `show', `desc', or `select'!"))
+  (unless (member query '(show desc select filter))
+    (error "`query' must be one of `show', `desc', `select', or `filter'!"))
   (cond ((eq query 'show)
          (quote (yql-show)))
         (args
@@ -45,16 +45,20 @@
                 (mapcar (lambda (x)
                           (cond ((stringp x) x)
                                 ((and (listp x)
-                                      (functionp (car x)))
+                                      (eval x))
                                  (eval x))
+                                ((listp x)
+                                 (quote x))
                                 (t
                                  (coerce (symbol-name x) 'string))))
                         args)))
            `(cond ((eq (quote ,query) 'desc)
                    (yql-desc ,@query-args))
                   ((eq (quote ,query) 'select)
-                   (yql-select ,@query-args)))))
-        (t (error "`desc' and `select' require args"))))
+                   (yql-select ,@query-args))
+                  ((eq (quote ,query) 'filter)
+                   ,(yql-filter (car query-args) (cdr query-args))))))
+        (t (error "`desc', `select', and `filter' require args"))))
 
 (defun yql-show ()
   "Makes a GET request to YQL's public-facing api for 'show tables'.
@@ -77,15 +81,17 @@ should be valid for `table'."
   (let ((qualifiers (if qualifiers (concat " WHERE " (concatenate 'string qualifiers)) "")))
     (yql-send-request (concat "SELECT " target " FROM " table qualifiers))))
 
-(defmacro yql-filter (symbol list)
+(defun yql-filter (symbol list)
   "Filters any JSON returned from a `yql-send-request' call for the value(s)
 associated to `symbol', where the JSON is `list'."
-  `(let ((result (yql-search-for-symbol ,symbol ,list)))
-     (if (or (typep result 'list)
-             (typep result 'string)
-             (typep result 'number))
-         result
-       (coerce result 'list))))
+  (if (eq (type-of symbol) 'string)
+      (setq symbol (intern symbol)))
+  (let ((result (yql-search-for-symbol symbol list)))
+    (if (or (typep result 'list)
+            (typep result 'string)
+            (typep result 'number))
+        result
+      (coerce result 'list))))
 
 (defun yql-escape-query-string (string)
   "Used internally. You probably won't want to use it."
