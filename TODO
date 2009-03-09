@@ -1,5 +1,6 @@
 0.2
 * DONE: Make yql macro accept ascii rather than just throwing strings at it
+* Add support for authenticated queries
 * More useful applications
 * Keybindings via a mode-map
 * More ways of handling the data in question
